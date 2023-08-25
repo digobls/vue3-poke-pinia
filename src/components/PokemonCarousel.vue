@@ -31,7 +31,7 @@ interface Image {
 }
 
 export default defineComponent({
-  name: 'Carousel',
+  name: 'PokemonCarousel',
   data() {
     return {
       images: [
@@ -108,41 +108,20 @@ export default defineComponent({
   &__bullet {
     width: 10px;
     height: 10px;
-    background-color: #ccc;
+    background: #FFFFFF;
+    border: 2px solid #FFF;
     border-radius: 50%;
     margin: 5px 0;
     cursor: pointer;
 
     &--active {
-      background-color: #333;
+      background-color: transparent;
     }
   }
-}
 
-.bullet-container {
-  position: absolute;
-  top: 50%;
-  right: -30px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.bullets {
-  position: absolute;
-  top: 50%;
-  right: -30px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-
-
-.active {
-  background-color: #333;
+  @media (max-width: 580px) {
+    display: none;
+  }
 }
 
 .carousel-slide-enter-active, .carousel-slide-leave-active {
