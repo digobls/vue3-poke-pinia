@@ -1,11 +1,21 @@
 import { describe, it, expect } from 'vitest'
 
 import { mount } from '@vue/test-utils'
-import HelloWorld from '../HelloWorld.vue'
+import PokemonCarousel from '../PokemonCarousel.vue'
+import image2 from '@/assets/home/charizard-carousel.png';
 
-describe('HelloWorld', () => {
-  it('renders properly', () => {
-    const wrapper = mount(HelloWorld, { props: { msg: 'Hello Vitest' } })
-    expect(wrapper.text()).toContain('Hello Vitest')
-  })
-})
+describe('PokemonCarousel', () => {
+  it('renders images and bullets properly', async () => {
+    const wrapper = mount(PokemonCarousel);
+    await wrapper.vm.$nextTick();
+
+    const bullets = wrapper.findAll('.carousel-container__bullet');
+
+    // Simulates clicking on the second bullet/bullet
+    await bullets[1].trigger('click');
+    await wrapper.vm.$nextTick();
+
+    // Checks if the second image is being displayed after clicking on the second bullet/bullet
+    expect(wrapper.find('.carousel-container__slide img[src="' + image2 + '"]').exists()).toBe(true);
+  });
+});
