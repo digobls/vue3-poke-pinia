@@ -1,15 +1,2 @@
 @import './colors.scss';
 @import 'base.scss';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-}

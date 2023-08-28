@@ -10,8 +10,8 @@
     <div class="carousel-container__bullets">
       <span
           v-for="(image, index) in images"
-          :key="index"
           class="carousel-container__bullet"
+          :key="index"
           :class="{'carousel-container__bullet--active': index === activeIndex}"
           @click="goToSlide(index)"
       ></span>
@@ -21,9 +21,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import image1 from '../assets/home/venosaur-carousel.png';
-import image2 from '../assets/home/charizard-carousel.png';
-import image3 from '../assets/home/blastoise-carousel.png';
+import image1 from '../assets/img/home/venosaur-carousel.png';
+import image2 from '../assets/img/home/charizard-carousel.png';
+import image3 from '../assets/img/home/blastoise-carousel.png';
 
 interface Image {
   url: string;
@@ -84,8 +84,8 @@ export default defineComponent({
 
   &__slide {
     flex-shrink: 0;
-    width: 400px;
-    height: 300px;
+    width: 420px;
+    height: 420px;
   }
 
   &__image {
@@ -98,7 +98,7 @@ export default defineComponent({
   &__bullets {
     position: absolute;
     top: 50%;
-    right: -30px;
+    right: 0;
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;

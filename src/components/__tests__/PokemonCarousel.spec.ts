@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 
 import { mount } from '@vue/test-utils'
 import PokemonCarousel from '../PokemonCarousel.vue'
-import image2 from '@/assets/home/charizard-carousel.png';
+import image2 from '@/assets/img/home/charizard-carousel.png';
 
 describe('PokemonCarousel', () => {
   it('renders images and bullets properly', async () => {
