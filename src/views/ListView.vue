@@ -66,20 +66,36 @@ export default defineComponent({
     },
     async fetchPokemonData() {
       try {
+        // Get pokemon from first generation
         const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=151");
         const pokemonList = await Promise.all(response.data.results.map(async (pokemon) => {
-          const pokemonData = await axios.get(pokemon.url);
+          // Get pokemon data
+          const pokemonDataResponse = await axios.get(pokemon.url);
+          const pokemonData = pokemonDataResponse.data;
+
+          // Get description of pokemon
+          const pokemonSpeciesResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonData.id}/`);
+          const pokemonSpeciesData = pokemonSpeciesResponse.data;
+          const description = pokemonSpeciesData.flavor_text_entries.find(entry => entry.language.name === 'en' && entry.version.name === 'ruby');
+
           return {
-            id: pokemonData.data.id,
-            code: pokemonData.data.id,
-            name: pokemonData.data.name,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonData.data.id}.png`,
-            types: pokemonData.data.types.map((type) => type.type.name),
+            id: pokemonData.id,
+            code: pokemonData.id < 10 ? `00${pokemonData.id}` : (pokemonData.id < 100 ? `0${pokemonData.id}` : `${pokemonData.id}`),
+            name: pokemonData.name,
+            image: pokemonData.sprites?.other?.['official-artwork']?.front_default,
+            types: pokemonData.types.map((type) => type.type.name),
+            stats: pokemonData.stats.map((stat) => ({
+              name: stat.stat.name,
+              baseValue: stat.base_stat,
+            })),
+            description: description?.flavor_text
           };
         }));
+
+        console.log('pokemonList', pokemonList);
         this.filteredPokemonList = pokemonList;
       } catch (error) {
-        console.error("Error fetching Pokémon data:", error);
+        console.error("Erro ao buscar dados do Pokémon:", error);
       } finally {
         this.isLoading = false;
       }
