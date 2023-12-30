@@ -50,7 +50,7 @@ import { usePokemonStore } from '@/stores/pokemon';
 import { storeToRefs } from "pinia";
 
 export default defineComponent({
-  name: "ListPokemonComponent",
+  name: "ListPokemon",
   setup() {
     const pokemonName = ref('');
     const pokemonType = ref('');

@@ -1,10 +1,15 @@
 <template>
-  <NavbarMenu/>
+  <NavbarMenu />
 
   <RouterView />
 </template>
 
-<script setup lang="ts">
-import { RouterView } from 'vue-router'
+<script lang="ts">
 import NavbarMenu from "@/components/Navbar.vue";
+
+export default {
+  components: {
+    NavbarMenu
+  }
+};
 </script>

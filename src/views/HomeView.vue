@@ -16,8 +16,15 @@
   </section>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import PokemonCarousel from "@/components/PokemonCarousel.vue";
+
+export default {
+  name: "HomePokemon",
+  components: {
+    PokemonCarousel
+  }
+};
 </script>
 
 <style lang="scss" scoped>

@@ -56,7 +56,7 @@ enum StatName {
 }
 
 export default defineComponent({
-  name: 'DetailPokemonComponent',
+  name: 'DetailPokemon',
   props: ['pokemonId'],
   setup() {
     const route = useRoute();
@@ -191,8 +191,7 @@ $color-map: (
     flying: #A890F0
 );
 
-@each $type,
-$color in $color-map {
+@each $type, $color in $color-map {
   .type-#{$type} {
     background-color: $color;
   }
