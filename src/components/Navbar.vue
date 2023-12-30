@@ -8,7 +8,7 @@
         <span class="navbar__container__hamburger-lines__line navbar__container__hamburger-lines__line--3"></span>
       </div>
       <div class="navbar__container__logo">
-        <h4 class="navbar__container__logo--text">Pokemon</h4>
+        <router-link to="/" class="navbar__container__logo--text">Pokemon</router-link>
       </div>
       <ul class="navbar__container__menu-items">
         <li class="navbar__container__menu-items__menu-item">
@@ -49,11 +49,12 @@ $white-color: #fff;
 $background-menu: #2C2C2D;
 
 .navbar {
-  width: 100%;
+  width: calc(100% + 1px);
   background: transparent;
   position: absolute;
   left: 0;
   top: 0;
+  z-index: 5;
 
   &__container {
     position: relative;
@@ -120,6 +121,7 @@ $background-menu: #2C2C2D;
         font-style: normal;
         font-weight: 450;
         line-height: normal;
+        text-decoration: none;
       }
     }
 
@@ -283,6 +285,10 @@ $background-menu: #2C2C2D;
         }
       }
     }
+  }
+
+  @media only screen and (min-width: 581px) {
+    width: 100%;
   }
 }
 </style>

@@ -1,32 +1,37 @@
 <template>
   <div class="block-list">
-    <div v-if="pokemonData" class="box-data">
+    <div v-if="dataPokemon" class="box-data">
       <div class="box-data__pokemon">
-        <img :src="pokemonData.detailImage" :alt="pokemonData.name" class="box-data__image" />
-        <h2 class="box-data__name">{{ pokemonData.code }} {{ pokemonData.name }}</h2>
+        <img :src="dataPokemon.imageDreamWorld" :alt="dataPokemon.name" class="box-data__image" />
+        <h2 class="box-data__name">{{ dataPokemon.code }} {{ dataPokemon.name }}</h2>
+        <div class="box-data__bg-bottom" :style="{ backgroundImage: `url(${currentSvgDataUrl})` }">
+          <div class="box-data__bg-bottom hover" :style="{ backgroundImage: `url(${currentSvgDataUrl})` }">
+          </div>
+        </div>
       </div>
 
       <div class="box-data__box-description">
         <h4 class="box-data__sub-title">Descrição</h4>
-        <div class="box-data__line-color" :class="getColorClass(pokemonData.types)"></div>
+        <div class="box-data__line-color" :class="getColorClass(dataPokemon.types)"></div>
         <p class="box-data__description">
-          <span class="box-data__description-name">{{ pokemonData.name }}</span>
-          {{ pokemonData.description }}
+          <span class="box-data__description-name">{{ dataPokemon.name }}</span>
+          {{ dataPokemon.description }}
         </p>
 
         <div class="box-data__type-container">
-          <div v-for="type in pokemonData.types" :key="type" class="box-data__type">
+          <div v-for="type in dataPokemon.types" :key="type" class="box-data__type">
             <img :src="getTypeIconUrl(type)" :alt="type" class="box-data_image-type" />
             <span class="box-data__name-type">{{ type }}</span>
           </div>
         </div>
         <h4 class="box-data__sub-title">Estatistica</h4>
-        <div class="box-data__line-color" :class="getColorClass(pokemonData.types)"></div>
+        <div class="box-data__line-color" :class="getColorClass(dataPokemon.types)"></div>
         <ul class="box-data__stats">
-          <li v-for="stat in pokemonData.stats" :key="stat.stat.name" class="box-data__stat">
-            <span class="box-data__stat-name"> {{ getAbbreviatedStatName(stat.stat.name) }}</span>
+          <li v-for="stat in dataPokemon.stats" :key="stat.name" class="box-data__stat">
+            <span class="box-data__stat-name"> {{ getAbbreviatedStatName(stat.name) }}</span>
             <div class="box-data__progress-bar">
-              <div class="box-data__progress-fill" :style="{ width: stat.base_stat + '%' }" :class="getTypeClass(pokemonData.types)"></div>
+              <div class="box-data__progress-fill" :style="{ width: stat.baseValue + '%' }"
+                   :class="getTypeClass(dataPokemon.types)"></div>
             </div>
           </li>
         </ul>
@@ -36,8 +41,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import axios from "axios";
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { usePokemonStore } from '@/stores/pokemon';
+import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
 
 enum StatName {
   HP = 'hp',
@@ -51,52 +58,111 @@ enum StatName {
 export default defineComponent({
   name: 'DetailPokemonComponent',
   props: ['pokemonId'],
-  data() {
-    return {
-      pokemonData: {},
-      statAbbreviations: {
-        [StatName.HP]: 'HP',
-        [StatName.Attack]: 'ATK',
-        [StatName.Defense]: 'DEF',
-        [StatName.SpecialAttack]: 'SpP',
-        [StatName.SpecialDefense]: 'SpD',
-        [StatName.Speed]: 'spd'
-      }
+  setup() {
+    const route = useRoute();
+    const pokemonStore = usePokemonStore();
+    const { getDataPokemon } = pokemonStore;
+    const { dataPokemon } = storeToRefs(pokemonStore);
+    const colorMap = new Map([
+      ['normal', '#A8A878'],
+      ['fighting', '#C03028'],
+      ['poison', '#A040A0'],
+      ['ground', '#E0C068'],
+      ['rock', '#B8A038'],
+      ['bug', '#A8B820'],
+      ['ghost', '#705898'],
+      ['steel', '#B8B8D0'],
+      ['fire', '#F08030'],
+      ['water', '#6890F0'],
+      ['grass', '#78C850'],
+      ['electric', '#F8D030'],
+      ['psychic', '#F85888'],
+      ['ice', '#98D8D8'],
+      ['dragon', '#7038F8'],
+      ['dark', '#705848'],
+      ['fairy', '#EE99AC'],
+      ['flying', '#A890F0']
+    ]);
+    const statAbbreviations = {
+      [StatName.HP]: 'HP',
+      [StatName.Attack]: 'ATK',
+      [StatName.Defense]: 'DEF',
+      [StatName.SpecialAttack]: 'SpP',
+      [StatName.SpecialDefense]: 'SpD',
+      [StatName.Speed]: 'spd'
     };
-  },
-  created() {
-    this.fetchPokemonById();
-  },
-  methods: {
-    getTypeIconUrl(type: string) {
-      return `/src/assets/img/types/${type}.svg`;
-    },
-    getTypeClass(types: any) {
-      return `type-${types[0]}`
-    },
-    getColorClass(types: any) {
-      return `background-grass`
-    },
-    getAbbreviatedStatName(statName: StatName) {
-      return this.statAbbreviations[statName] || statName;
-    },
-    async fetchPokemonById() {
-      try {
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/3`);
-        this.pokemonData = {
-          id: 1,
-          code: '001',
-          image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-          detailImage: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-          name: 'bulbasour',
-          types: ['grass', 'poision'],
-          stats: [],
-          description: 'Bulbasaur is a Grass/Poison-type Pokémon.'
-        };
-      } catch (error) {
-        console.error("Error fetching Pokemon details:", error);
+
+    let svgUrlHillBig = '';
+    let svgUrlHillSmall = '';
+    let currentSvgDataUrl = ref('');
+
+    onMounted(async () => {
+      const idPokemon = route.params.idPokemon;
+      if (idPokemon) {
+        await getDataPokemon(idPokemon);
       }
-    },
+
+      window.addEventListener('resize', handleResize);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', handleResize);
+    });
+
+    // Generate svg background url
+    const generateSvgDataUrl = async (svgUrl, color) => {
+      const response = await fetch(svgUrl);
+      const svgText = await response.text();
+      const modifiedSvgText = svgText.replace(/fill="#[A-Fa-f0-9]+"/, `fill="${color}"`);
+      const svgBlob = new Blob([modifiedSvgText], { type: 'image/svg+xml' });
+      return URL.createObjectURL(svgBlob);
+    };
+
+    // Get icon from pokemon type
+    const getTypeIconUrl = (type: string) => {
+      return `/src/assets/img/types/${type}.svg`;
+    };
+
+    // Get class from pokemon type
+    const getTypeClass = (types: any) => {
+      return `type-${types[0]}`
+    };
+
+    // Get color class from pokemon type
+    const getColorClass = (types: any) => {
+      return `background-${types[0]}`
+    };
+
+    // Get stat abbreviations
+    const getAbbreviatedStatName = (statName: StatName) => {
+      return statAbbreviations[statName] || statName;
+    }
+
+    // On resize window
+    const handleResize = () => {
+      currentSvgDataUrl.value = window.innerWidth > 580 ? svgUrlHillBig : svgUrlHillSmall;
+    };
+
+    // Watch for changes in dataPokemon
+    watch(dataPokemon, async (newValue: any) => {
+      if (newValue) {
+        const type = newValue?.types[0]?.toLowerCase();
+        const color = colorMap.get(type || 'transparent');
+
+        svgUrlHillBig = await generateSvgDataUrl('/src/assets/img/icons/hillBig.svg', color);
+        svgUrlHillSmall = await generateSvgDataUrl('/src/assets/img/icons/hillSmall.svg', color);
+        currentSvgDataUrl.value = window.innerWidth > 580 ? svgUrlHillBig : svgUrlHillSmall;
+      }
+    });
+
+    return {
+      dataPokemon,
+      currentSvgDataUrl,
+      getTypeIconUrl,
+      getTypeClass,
+      getColorClass,
+      getAbbreviatedStatName
+    };
   }
 })
 </script>
@@ -139,7 +205,7 @@ $color in $color-map {
 .block-list {
   background-image: url('/src/assets/img/global/pokemon-bg.png');
   background-repeat: repeat;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .box-data {
@@ -150,26 +216,51 @@ $color in $color-map {
 
   &__pokemon {
     padding: 20px;
+    position: relative;
+  }
+
+  &__bg-bottom {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .hover {
+    opacity: 0.5;
+    bottom: 18px;
   }
 
   &__image {
+    position: relative;
     background: transparent;
     width: 100%;
     max-width: 200px;
     display: block;
     object-fit: cover;
     margin: 70px auto 0;
+    z-index: 2;
   }
 
   &__name {
+    position: relative;
     color: $color-white;
     text-align: center;
     font-family: $font-family-fira;
     font-size: 30px;
     font-style: normal;
     font-weight: 700;
-    line-height: 10px;
     text-transform: capitalize;
+    z-index: 2;
+    margin: 0;
+    height: 40px;
+    line-height: 55px;
   }
 
   &__sub-title {
@@ -192,9 +283,9 @@ $color in $color-map {
   }
 
   &__box-description {
-    padding: 20px;
+    padding: 20px 20px 40px;
     background: #2C2C2D;
-    box-shadow: 0 0 10px 0 #000;
+    box-shadow: none;
   }
 
   &__description {
@@ -299,6 +390,13 @@ $color in $color-map {
       padding: 0;
     }
 
+    &__bg-bottom {
+      position: fixed;
+      height: 352px;
+      width: 100vw;
+      background-position: 50% 0;
+    }
+
     &__image {
       width: 362px;
       max-width: 362px;
@@ -308,23 +406,31 @@ $color in $color-map {
     &__name {
       font-size: 45px;
       white-space: nowrap;
+      margin-top: 20px;
     }
 
     &__box-description {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 420px;
-      margin-left: 48px;
-      margin-top: 73px;
-      padding: 20px 2px 0;
+      margin: 73px 0 0 48px;
       border-radius: 4px;
+      box-shadow: 0 0 10px 0 #000;
+      padding: 20px 2px 0;
     }
 
     &__stats {
       margin-top: 11px;
     }
 
+    &__stat-name {
+      font-size: 25px;
+      min-width: 45px;
+    }
+
     &__line-color {
-      left: 0px;
+      left: 0;
       width: 100%;
     }
 
@@ -334,6 +440,7 @@ $color in $color-map {
 
     &__progress-bar {
       width: 80%;
+      max-width: 315px;
     }
 
     &__name-type {

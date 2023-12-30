@@ -2,7 +2,7 @@
   <section>
     <div class="block-list">
       <!-- Search -->
-      <div v-if="!isLoading" class="pokemon-search">
+      <div v-if="!loadingList" class="pokemon-search">
         <input v-model="pokemonName" type="text" placeholder="Search" class="pokemon-search__input" />
 
         <select v-model="pokemonType" class="pokemon-search__select">
@@ -30,14 +30,14 @@
       </a>
 
       <!-- Loading -->
-      <div v-if="isLoading" class="container-loading">
+      <div v-if="loadingList" class="container-loading">
         <a v-for="index in 151" :key="index" class="pokemon-card">
           <p class="pokemon-card--loading-adjust loading-on-element-custom"></p>
         </a>
       </div>
 
       <!-- Empty search -->
-      <div v-if="!listPokemon?.length && !isLoading" class="container-empty-search">
+      <div v-if="!listPokemon?.length && !loadingList" class="container-empty-search">
         <p class="container-empty-search__text">Pokémon not found.</p>
       </div>
     </div>
@@ -56,7 +56,7 @@ export default defineComponent({
     const pokemonType = ref('');
     const pokemonStore = usePokemonStore();
     const { fetchPokemonList, filterPokemonList, totalPokemon } = pokemonStore;
-    const { listPokemon, listTypes, isLoading } = storeToRefs(pokemonStore);
+    const { listPokemon, listTypes, loadingList } = storeToRefs(pokemonStore);
 
     onMounted(async () => {
       await fetchPokemonList();
@@ -76,7 +76,7 @@ export default defineComponent({
       listTypes,
       listPokemon,
       totalPokemon,
-      isLoading
+      loadingList
     };
   },
   methods: {
