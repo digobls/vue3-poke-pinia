@@ -418,6 +418,7 @@ $color in $color-map {
       border-radius: 4px;
       box-shadow: 0 0 10px 0 #000;
       padding: 20px 2px 0;
+      max-height: 620px;
     }
 
     &__stats {

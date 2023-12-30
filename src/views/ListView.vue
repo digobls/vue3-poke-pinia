@@ -62,10 +62,17 @@ export default defineComponent({
       await fetchPokemonList();
     });
 
+    // Search pokemon
     const searchPokemon = () => {
       filterPokemonList(pokemonName.value, pokemonType.value);
     };
 
+    // Get icon from pokemon type
+    const getTypeIconUrl = (type: string) => {
+      return `/src/assets/img/types/${type}.svg`;
+    }
+
+    // Watch data filter
     watch([pokemonName, pokemonType], () => {
       searchPokemon();
     });
@@ -76,13 +83,9 @@ export default defineComponent({
       listTypes,
       listPokemon,
       totalPokemon,
-      loadingList
+      loadingList,
+      getTypeIconUrl
     };
-  },
-  methods: {
-    getTypeIconUrl(type: string) {
-      return `/src/assets/img/types/${type}.svg`;
-    }
   }
 });
 </script>
